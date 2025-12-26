@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Knowledge Quiz</title>
+    <style>
+        /* --- Simple & Clean Styling --- */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f2f5; /* Light, eye-friendly background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .quiz-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        h2 { color: #1a73e8; margin-bottom: 20px; }
+        
+        .hidden { display: none; }
+
+        /* --- Inputs & Buttons --- */
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input[type="text"]:focus { border-color: #1a73e8; }
+
+        .btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn:hover { background-color: #1557b0; }
+
+        .option-btn {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            text-align: left;
+            padding: 12px 15px;
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background-color: #e8f0fe;
+            border-color: #1a73e8;
+        }
+
+        #score-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2da44e;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen" class="quiz-card">
+        <h2>Welcome to Quiz</h2>
+        <p style="margin-bottom: 20px; color: #666;">Please enter your name to begin:</p>
+        <input type="text" id="user-name" placeholder="Enter your full name..." required>
+        <button class="btn" onclick="validateAndStart()">Start Quiz</button>
+    </div>
+
+    <div id="quiz-screen" class="quiz-card hidden">
+        <p id="progress" style="font-size: 0.8rem; color: #888; margin-bottom: 10px;"></p>
+        <h3 id="question-text" style="margin-bottom: 20px;">Question goes here?</h3>
+        <div id="options-box">
+            </div>
+    </div>
+
+    <div id="result-screen" class="quiz-card hidden">
+        <h2>Quiz Finished!</h2>
+        <p id="greeting-msg" style="font-size: 1.1rem;"></p>
+        <div id="score-display">0 / 0</div>
+        <button class="btn" onclick="location.reload()">Take Quiz Again</button>
+    </div>
+
+    <script>
+        // --- Quiz Data (Current Affairs) ---
+        const questions = [
+            {
+                q: "Who is the current President of India (as of 2024-2025)?",
+                options: ["Narendra Modi", "Droupadi Murmu", "Amit Shah", "Jagdeep Dhankhar"],
+                answer: 1
+            },
+            {
+                q: "Which country hosted the 2024 Summer Olympic Games?",
+                options: ["Japan", "USA", "France", "Germany"],
+                answer: 2
+            },
+            {
+                q: "What is the capital of Lakshadweep, which was recently in news?",
+                options: ["Kavaratti", "Port Blair", "Panaji", "Silvassa"],
+                answer: 0
+            },
+            {
+                q: "India's 'Mission Chandrayaan-3' landed on which part of the moon?",
+                options: ["North Pole", "Equator", "South Pole", "Dark Side"],
+                answer: 2
+            }
+        ];
+
+        let currentQIndex = 0;
+        let score = 0;
+        let userName = "";
+
+        // Function to check name and start
+        function validateAndStart() {
+            const nameInput = document.getElementById('user-name').value;
+            if (nameInput.trim() === "") {
+                alert("Plese enter your name first!");
+            } else {
+                userName = nameInput;
+                document.getElementById('start-screen').classList.add('hidden');
+                document.getElementById('quiz-screen').classList.remove('hidden');
+                showQuestion();
+            }
+        }
+
+        // Function to display questions
+        function showQuestion() {
+            const qData = questions[currentQIndex];
+            document.getElementById('progress').innerText = `Question ${currentQIndex + 1} of ${questions.length}`;
+            document.getElementById('question-text').innerText = qData.q;
+            
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = ""; // Clear old options
+
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.classList.add('option-btn');
+                btn.onclick = () => handleAnswer(index);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        // Function to handle answer selection
+        function handleAnswer(choice) {
+            if (choice === questions[currentQIndex].answer) {
+                score++;
+            }
+
+            currentQIndex++;
+            if (currentQIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        // Function to show final marks
+        function showResult() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            document.getElementById('greeting-msg').innerText = `Great job, ${userName}! Here is your result:`;
+            document.getElementById('score-display').innerText = `Score: ${score} / ${questions.length}`;
+        }
+    </script>
+</body>
+</html>
